@@ -6,7 +6,7 @@ export const registerSchema = z.object({
 
     email: z.string().email(),
     displayName: requiredString('displayName'),
-    password: requiredString('password')
+    password: requiredString('password')//
 })
 
 
