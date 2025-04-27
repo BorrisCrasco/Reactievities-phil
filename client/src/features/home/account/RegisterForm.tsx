@@ -5,8 +5,8 @@ import { Box, Button, Paper, Typography } from "@mui/material";
 import TextInput from "../../../app/shared/components/TextInput";
 import { LockOpen } from "@mui/icons-material";
 import { useForm } from "react-hook-form";
-import { registerSchema, RegisterSchema } from "../../../lib/schemas/RegisterSchema";
 import { Link } from "react-router";
+import { RegisterSchema, registerSchema } from "../../../lib/schemas/registerSchema";
 
 
 
