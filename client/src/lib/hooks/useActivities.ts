@@ -4,7 +4,6 @@ import { useLocation } from "react-router";
 import { useAccount } from "./useAccount";
 import { useStore } from "./useStore";
 import { FieldValues } from "react-hook-form";
-import { toast } from "react-toastify";
 
 export const useActivities = (id?: string) => {
     const { activityStore: { filter, startDate } } = useStore();
@@ -71,23 +70,21 @@ export const useActivities = (id?: string) => {
 
     const updateActivity = useMutation({
         mutationFn: async (activity: Activity) => {
-            await agent.put('/activities', activity)
+            await agent.put(`/activities`, activity)
         },
         onSuccess: async () => {
-            toast.success('Successfully updated the activity');
-            await queryClient.invalidateQueries({
+            await queryClient.refetchQueries({
                 queryKey: ['activities']
             })
         }
-    });
+    })
 
     const createActivity = useMutation({
         mutationFn: async (activity: FieldValues) => {
-            const response = await agent.post('/activities', activity)
+            const response = await agent.post('/activities', activity);
             return response.data;
         },
         onSuccess: async () => {
-            toast.success('Successfully created the activity');
             await queryClient.invalidateQueries({
                 queryKey: ['activities']
             })
