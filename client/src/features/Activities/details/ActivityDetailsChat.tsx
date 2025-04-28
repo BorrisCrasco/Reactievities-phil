@@ -1,4 +1,4 @@
-import { Box, Typography, Card, CardContent, TextField, Avatar, CircularProgress, Button, Stack, IconButton, Popover, InputAdornment } from "@mui/material";
+import { Box, Card, CardContent, TextField, Avatar, CircularProgress, Button, Stack, IconButton, Popover, InputAdornment, Typography } from "@mui/material";
 import { Link, useParams } from "react-router";
 import { useComments } from "../../../lib/hooks/useComments";
 import { timeAgo } from "../../../lib/util/util";
@@ -13,8 +13,8 @@ const ActivityDetailsChat = observer(function ActivityDetailsChat() {
     const { commentStore } = useComments(id);
     const { register, handleSubmit, reset, setValue, watch, formState: { isSubmitting } } = useForm();
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
+    const chatContainerRef = useRef<HTMLDivElement | null>(null); // Added ref to chat container
 
     const addComment = async (data: FieldValues) => {
         try {
@@ -30,7 +30,7 @@ const ActivityDetailsChat = observer(function ActivityDetailsChat() {
 
     const handleKeyPress = (event: React.KeyboardEvent<HTMLDivElement>) => {
         if (event.key === 'Enter' && !event.shiftKey) {
-            event.preventDefault();
+            event.preventDefault();  // Prevents auto-scroll when 'Enter' is pressed
             handleSubmit(addComment)();
         }
     };
@@ -51,8 +51,14 @@ const ActivityDetailsChat = observer(function ActivityDetailsChat() {
 
     const open = Boolean(anchorEl);
 
+    // Scroll to the bottom when new comments are added only if the user has scrolled to the bottom
     useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        if (chatContainerRef.current) {
+            const isScrolledToBottom = chatContainerRef.current.scrollHeight - chatContainerRef.current.scrollTop === chatContainerRef.current.clientHeight;
+            if (isScrolledToBottom) {
+                messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
     }, [commentStore.comments.length]);
 
     return (
@@ -80,7 +86,7 @@ const ActivityDetailsChat = observer(function ActivityDetailsChat() {
                                 fullWidth
                                 multiline
                                 minRows={2}
-                                placeholder="Enter your comment (Enter to submit, SHIFT + Enter for new line)"
+                                placeholder={'Enter your comment'}
                                 onKeyDown={handleKeyPress}
                                 InputProps={{
                                     endAdornment: (
@@ -118,7 +124,10 @@ const ActivityDetailsChat = observer(function ActivityDetailsChat() {
                     </Popover>
 
                     {/* COMMENTS */}
-                    <Box sx={{ height: 400, overflowY: 'auto', mt: 3 }}>
+                    <Box
+                        sx={{ height: 400, overflowY: 'auto', mt: 3 }}
+                        ref={chatContainerRef} // Attach the ref here
+                    >
                         {commentStore.comments.map(comment => (
                             <Box key={comment.id} sx={{ display: 'flex', my: 2 }}>
                                 <Avatar src={comment.imageUrl} alt="user image" sx={{ mr: 2 }} />
