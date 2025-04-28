@@ -10,6 +10,7 @@ import SelectInput from "../../../app/shared/components/SelectInput";
 import { categoryOptions } from "./categoryOptions";
 import DateTimeInput from "../../../app/shared/components/DateTimeInput";
 import LocationInput from "../../../app/shared/components/LocationInput";
+import { toast } from "react-toastify";
 
 export default function ActivityForm() {
     const { control, reset, handleSubmit } = useForm<ActivitySchema>({
@@ -33,17 +34,22 @@ export default function ActivityForm() {
     }, [activity, reset]);
 
     const onSubmit = async (data: ActivitySchema) => {
-        const {location, ...rest} = data; 
-        const flattenedData = {...rest, ...location};
+        const { location, ...rest } = data;
+        const flattenedData = { ...rest, ...location };
+
         try {
-            if (activity) {
-                updateActivity.mutate({...activity, ...flattenedData}, {
-                    onSuccess: () => navigate(`/activities/${activity.id}`)
+            if (id) {
+                updateActivity.mutate({ id: id, ...flattenedData }, {
+                    onSuccess: () => navigate(`/activities/${id}`)
                 })
+                toast.success("Successfully updated the activities")
+
             } else {
+
                 createActivity.mutate(flattenedData, {
                     onSuccess: (id) => navigate(`/activities/${id}`)
                 })
+                toast.success("Successfully created the activities")
             }
         } catch (error) {
             console.log(error);
@@ -68,9 +74,9 @@ export default function ActivityForm() {
                         control={control}
                         name='category'
                     />
-                    <DateTimeInput label='Date' control={control} name='date' />
-                </Box>
 
+                    <DateTimeInput label='Date' control={control} name='date' minDateTime={new Date()} />
+                </Box>
 
                 <LocationInput control={control} label='Enter the location' name="location" />
 
@@ -81,7 +87,9 @@ export default function ActivityForm() {
                         color='success'
                         variant="contained"
                         disabled={updateActivity.isPending || createActivity.isPending}
-                    >Submit</Button>
+                    >
+                        Submit
+                    </Button>
                 </Box>
             </Box>
         </Paper>

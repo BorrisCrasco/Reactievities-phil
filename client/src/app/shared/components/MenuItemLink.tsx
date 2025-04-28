@@ -12,7 +12,7 @@ export default function MenuItemLink({ children, to }: { children: ReactNode, to
             fontSize: '1.2rem',
             textTransform:'uppercase',
             fontWeight:'bold',
-            colot:'inherit',
+            color:'inherit',
             '&.active':{
                 color: 'yellow'
             }

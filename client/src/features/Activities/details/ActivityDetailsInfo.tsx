@@ -1,58 +1,88 @@
-import {  CalendarToday, Info, Place } from "@mui/icons-material";
-import { Box, Button, Divider, Grid2, Paper, Typography } from "@mui/material";
+import { CalendarToday, Info, Place } from "@mui/icons-material";
+import { Box, Button, Divider, Grid, Paper, Typography, useMediaQuery, useTheme, Stack } from "@mui/material";
 import { formatDate } from "../../../lib/util/util";
 import { useState } from "react";
 import MapComponents from "../../../app/shared/components/MapComponents";
-
 
 type Props = {
     activity: Activity
 }
 
-export default function ActivityDetailsInfo({activity}: Props) {
+export default function ActivityDetailsInfo({ activity }: Props) {
     const [mapOpen, setMapOpen] = useState(false);
 
-    return (
-        <Paper sx={{ mb: 2 }}>
-            <Grid2 container alignItems="center" pl={2} py={1}>
-                <Grid2 size={1}>
-                    <Info color="info" fontSize="large" />
-                </Grid2>
-                <Grid2 size={11}>
-                    <Typography>{activity.description}</Typography>
-                </Grid2>
-            </Grid2>
-            <Divider />
-            <Grid2 container alignItems="center" pl={2} py={1}>
-                <Grid2 size={1}>
-                    <CalendarToday color="info" fontSize="large" />
-                </Grid2>
-                <Grid2 size={11}>
-                    <Typography>{formatDate(activity.date)}</Typography>
-                </Grid2>
-            </Grid2>
-            <Divider />
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // 📱 detect mobile
 
-            <Grid2 container alignItems="center" pl={2} py={1}>
-                <Grid2 size={1}>
+    return (
+        <Paper sx={{ mb: 2, p: 2, borderRadius: 3 }}>
+            {/* Description */}
+            <Grid container alignItems="center" spacing={2}>
+                <Grid item xs={12} sm={1}>
+                    <Info color="info" fontSize="large" />
+                </Grid>
+                <Grid item xs={12} sm={11}>
+                    <Typography>{activity.description}</Typography>
+                </Grid>
+            </Grid>
+
+            <Divider sx={{ my: 2 }} />
+
+            {/* Date */}
+            <Grid container alignItems="center" spacing={2}>
+                <Grid item xs={12} sm={1}>
+                    <CalendarToday color="info" fontSize="large" />
+                </Grid>
+                <Grid item xs={12} sm={11}>
+                    <Typography>{formatDate(activity.date)}</Typography>
+                </Grid>
+            </Grid>
+
+            <Divider sx={{ my: 2 }} />
+
+            {/* Venue + Map Toggle */}
+            <Grid container alignItems="center" spacing={2}>
+                <Grid item xs={12} sm={1}>
                     <Place color="info" fontSize="large" />
-                </Grid2>
-                <Grid2 size={11} display='flex' justifyContent='space-between' alignItems='center'>
-                    <Typography>
-                        {activity.venue}, {activity.city}
-                    </Typography>
-                    <Button sx={{whiteSpace: 'nowrap', mx:2}} onClick={() => setMapOpen(!mapOpen)}>
-                        {mapOpen ? 'Hide map' : 'Show map'}
-                    </Button>
-                </Grid2>
-            </Grid2>
+                </Grid>
+                <Grid item xs={12} sm={11}>
+                    <Stack
+                        direction={isMobile ? 'column' : 'row'}
+                        spacing={2}
+                        justifyContent="space-between"
+                        alignItems={isMobile ? 'flex-start' : 'center'}
+                        width="100%"
+                    >
+                        <Typography>
+                            {activity.venue}, {activity.city}
+                        </Typography>
+                        <Button
+                            variant="outlined"
+                            onClick={() => setMapOpen(!mapOpen)}
+                            sx={{ whiteSpace: 'nowrap' }}
+                        >
+                            {mapOpen ? 'Hide map' : 'Show map'}
+                        </Button>
+                    </Stack>
+                </Grid>
+            </Grid>
+
+            {/* Map */}
             {mapOpen && (
-                <Box sx={{height:400, zIndex:1000, display: 'block'}}>
-                        <MapComponents position={[activity.latitude,activity.longitude]} 
+                <Box
+                    sx={{
+                        height: 400,
+                        width: '100%',
+                        mt: 2,
+                        zIndex: 10,
+                    }}
+                >
+                    <MapComponents
+                        position={[activity.latitude, activity.longitude]}
                         venue={activity.venue}
-                        />
+                    />
                 </Box>
             )}
         </Paper>
-    )
+    );
 }

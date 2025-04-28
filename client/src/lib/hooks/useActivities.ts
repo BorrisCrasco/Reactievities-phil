@@ -69,8 +69,8 @@ export const useActivities = (id?: string) => {
     });
 
     const updateActivity = useMutation({
-        mutationFn: async (activity: Activity) => {
-            await agent.put(`/activities`, activity)
+        mutationFn: async (activity: FieldValues & {id: string} ) => {
+            await agent.put(`/activities/${activity.id}`, activity)
         },
         onSuccess: async () => {
             await queryClient.refetchQueries({
