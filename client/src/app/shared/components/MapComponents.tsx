@@ -1,7 +1,7 @@
 import {MapContainer,Popup,TileLayer,Marker} from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
-import {Icon} from 'leaflet';
-import markerIconPng from 'leaf/dist/images/marker-icon.png'
+import markerIconPng from 'leaflet/dist/images/marker-icon.png';
+import { Icon } from 'leaflet';
 
 type Props= {
     position : [number,number];
@@ -18,7 +18,7 @@ export default function MapComponents({position,venue}: Props) {
             />
             <Marker position={position} icon={new Icon({iconUrl: markerIconPng})}>
                 <Popup>
-                    {venue}
+                  {venue}
                 </Popup>
             </Marker>
         </MapContainer>
